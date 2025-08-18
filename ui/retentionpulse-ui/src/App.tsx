@@ -258,11 +258,28 @@ export default function App() {
       .catch(() => setHealth({ status: "error" }));
   }, []);
 
-  const probabilityPct = useMemo(
-    () => (pred ? Math.round(pred.churn_probability * 100) : null),
-    [pred]
-  );
+  // const probabilityPct = useMemo(
+  //   () => (pred ? Math.round(pred.churn_probability * 100) : null),
+  //   [pred]
+  // );
 
+  // inside App component:
+  const probRaw = pred?.churn_probability;
+
+  // coerce to number + guard against NaN/Infinity
+  const prob = useMemo(() => {
+    const n = typeof probRaw === "number" ? probRaw : Number(probRaw);
+    return Number.isFinite(n) ? n : null;
+  }, [probRaw]);
+
+  const probabilityPct = useMemo(
+    () => (prob !== null ? Math.round(prob * 100) : null),
+    [prob]
+  );
+  const probabilityLabel = useMemo(
+    () => (prob !== null ? `${(prob * 100).toFixed(1)}%` : "—"),
+    [prob]
+  );
   async function onPredict() {
     setError(null);
     setPred(null);
@@ -512,11 +529,17 @@ export default function App() {
               <div className="mt-1 h-3 w-full bg-gray-100 rounded-full overflow-hidden">
                 <div
                   className="h-3 bg-indigo-600"
-                  style={{ width: `${probabilityPct ?? 0}%` }}
+                  style={{
+                    width:
+                      probabilityPct !== null
+                        ? `${Math.min(100, Math.max(0, probabilityPct))}%`
+                        : "0%",
+                  }}
                 />
               </div>
+
               <div className="mt-1 text-sm font-semibold">
-                {pred ? `${(pred.churn_probability * 100).toFixed(1)}%` : "–"}
+                {probabilityLabel}
               </div>
             </div>
             <div className="mt-2">
