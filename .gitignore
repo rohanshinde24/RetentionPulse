@@ -1,0 +1,24 @@
+# Python
+venv/
+.venv/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Notebooks & ML runs
+*.ipynb_checkpoints/
+mlruns/
+artifacts/
+notebooks/.ipynb_checkpoints/
+
+# Node
+ui/**/node_modules/
+ui/**/dist/
+
+# OS/editor
+.DS_Store
+*.swp
+
+# Env files (frontend keeps .env.local, don’t commit secrets)
+ui/**/.env.local

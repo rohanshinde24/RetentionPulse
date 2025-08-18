@@ -1,0 +1,38 @@
+version: "3.9"
+services:
+  prediction:
+    build:
+      context: .
+      dockerfile: api/prediction_service/Dockerfile
+    environment:
+      - MODEL_PATH=models/model.pkl
+    ports:
+      - "8001:8001"
+    restart: unless-stopped
+
+  explain:
+    build:
+      context: .
+      dockerfile: api/explain_service/Dockerfile
+    environment:
+      - MODEL_PATH=models/model.pkl
+    ports:
+      - "8002:8002"
+    restart: unless-stopped
+    depends_on:
+      - prediction
+
+  gateway:
+    build:
+      context: .
+      dockerfile: api/gateway_service/Dockerfile
+    environment:
+      # Compose service names resolve via DNS:
+      - PREDICT_URL=http://prediction:8001
+      - EXPLAIN_URL=http://explain:8002
+    ports:
+      - "8000:8000"
+    restart: unless-stopped
+    depends_on:
+      - prediction
+      - explain

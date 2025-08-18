@@ -1,0 +1,690 @@
+// import { useState } from "react";
+// import "./App.css";
+
+// function App() {
+//   const [formData, setFormData] = useState({
+//     tenure: "",
+//     monthlyCharges: "",
+//     totalCharges: "",
+//   });
+
+//   const [prediction, setPrediction] = useState<string | null>(null);
+//   const [loading, setLoading] = useState(false);
+
+//   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+//     setFormData({ ...formData, [e.target.name]: e.target.value });
+//   };
+
+//   // const handleSubmit = async (e: React.FormEvent) => {
+//   //   e.preventDefault();
+//   //   setLoading(true);
+//   //   setPrediction(null);
+
+//   //   // Map frontend keys → backend keys, and cast numbers
+//   //   const payload = {
+//   //     gender: "Male",
+//   //     SeniorCitizen: 0,
+//   //     Partner: "Yes",
+//   //     Dependents: "No",
+//   //     tenure: Number(formData.tenure),
+//   //     PhoneService: "Yes",
+//   //     MultipleLines: "No",
+//   //     InternetService: "DSL",
+//   //     OnlineSecurity: "Yes",
+//   //     OnlineBackup: "Yes",
+//   //     DeviceProtection: "No",
+//   //     TechSupport: "Yes",
+//   //     StreamingTV: "No",
+//   //     StreamingMovies: "No",
+//   //     Contract: "One year",
+//   //     PaperlessBilling: "Yes",
+//   //     PaymentMethod: "Mailed check",
+//   //     MonthlyCharges: Number(formData.monthlyCharges),
+//   //     TotalCharges: Number(formData.totalCharges),
+//   //   };
+
+//   //   try {
+//   //     const response = await fetch("http://127.0.0.1:8000/predict", {
+//   //       method: "POST",
+//   //       headers: { "Content-Type": "application/json" },
+//   //       body: JSON.stringify(payload),
+//   //     });
+
+//   //     const data = await response.json();
+//   //     setPrediction(data.prediction); // adjust if backend returns differently
+//   //   } catch (err) {
+//   //     console.error("Error calling API:", err);
+//   //     setPrediction("Error fetching prediction");
+//   //   } finally {
+//   //     setLoading(false);
+//   //   }
+//   // };
+//   const handleSubmit = async (e: React.FormEvent) => {
+//     e.preventDefault();
+//     setLoading(true);
+//     setPrediction(null);
+
+//     // ✅ Match backend field names (PascalCase where required)
+//     const payload = {
+//       gender: "Male", // hardcoded for now
+//       SeniorCitizen: 0, // hardcoded
+//       Partner: "Yes", // hardcoded
+//       Dependents: "No", // hardcoded
+//       tenure: Number(formData.tenure),
+//       PhoneService: "Yes", // hardcoded
+//       MultipleLines: "No", // hardcoded
+//       InternetService: "DSL", // hardcoded
+//       OnlineSecurity: "Yes", // hardcoded
+//       OnlineBackup: "Yes", // hardcoded
+//       DeviceProtection: "No", // hardcoded
+//       TechSupport: "Yes", // hardcoded
+//       StreamingTV: "No", // hardcoded
+//       StreamingMovies: "No", // hardcoded
+//       Contract: "One year", // hardcoded
+//       PaperlessBilling: "Yes", // hardcoded
+//       PaymentMethod: "Mailed check", // hardcoded
+//       MonthlyCharges: Number(formData.monthlyCharges),
+//       TotalCharges: Number(formData.totalCharges),
+//     };
+
+//     try {
+//       const response = await fetch("http://127.0.0.1:8000/predict", {
+//         method: "POST",
+//         headers: { "Content-Type": "application/json" },
+//         body: JSON.stringify(payload),
+//       });
+
+//       const data = await response.json();
+//       setPrediction(data.prediction);
+//     } catch (err) {
+//       console.error("Error calling API:", err);
+//       setPrediction("Error fetching prediction");
+//     } finally {
+//       setLoading(false);
+//     }
+//   };
+
+//   return (
+//     <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100 p-6">
+//       <h1 className="text-3xl font-bold mb-6">RetentionPulse Predictor</h1>
+
+//       <form
+//         onSubmit={handleSubmit}
+//         className="bg-white p-6 rounded-xl shadow-md w-96 space-y-4"
+//       >
+//         <div>
+//           <label className="block text-sm font-medium">Tenure</label>
+//           <input
+//             type="number"
+//             name="tenure"
+//             value={formData.tenure}
+//             onChange={handleChange}
+//             className="mt-1 block w-full border rounded-md p-2"
+//             required
+//           />
+//         </div>
+
+//         <div>
+//           <label className="block text-sm font-medium">Monthly Charges</label>
+//           <input
+//             type="number"
+//             step="0.01"
+//             name="monthlyCharges"
+//             value={formData.monthlyCharges}
+//             onChange={handleChange}
+//             className="mt-1 block w-full border rounded-md p-2"
+//             required
+//           />
+//         </div>
+
+//         <div>
+//           <label className="block text-sm font-medium">Total Charges</label>
+//           <input
+//             type="number"
+//             step="0.01"
+//             name="totalCharges"
+//             value={formData.totalCharges}
+//             onChange={handleChange}
+//             className="mt-1 block w-full border rounded-md p-2"
+//             required
+//           />
+//         </div>
+
+//         <button
+//           type="submit"
+//           className="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 transition"
+//           disabled={loading}
+//         >
+//           {loading ? "Predicting..." : "Predict"}
+//         </button>
+//       </form>
+
+//       {prediction && (
+//         <div className="mt-6 p-4 bg-gray-200 rounded-md shadow-md">
+//           <p className="text-lg font-semibold">Prediction: {prediction}</p>
+//         </div>
+//       )}
+//     </div>
+//   );
+// }
+
+// export default App;import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
+import Select from "./components/Select";
+import NumberInput from "./components/NumberInput"; // assuming you added this too
+
+// ----------------- Types -----------------
+export type YesNo = "Yes" | "No";
+export type ContractType = "Month-to-month" | "One year" | "Two year";
+export type InternetServiceType = "DSL" | "Fiber optic" | "No";
+
+export interface CustomerData {
+  gender: string;
+  SeniorCitizen: number; // 0 or 1
+  Partner: YesNo;
+  Dependents: YesNo;
+  tenure: number;
+  PhoneService: YesNo;
+  MultipleLines: string; // allow "No phone service"
+  InternetService: InternetServiceType;
+  OnlineSecurity: string;
+  OnlineBackup: string;
+  DeviceProtection: string;
+  TechSupport: string;
+  StreamingTV: string;
+  StreamingMovies: string;
+  Contract: ContractType;
+  PaperlessBilling: YesNo;
+  PaymentMethod: string;
+  MonthlyCharges: number;
+  TotalCharges: number;
+}
+
+interface PredictionResponse {
+  prediction: string;
+  churn_probability: number;
+  threshold: number;
+}
+
+interface ExplainResponse {
+  top_features?: { name: string; abs_shap: number; shap: number }[];
+  error?: string;
+}
+
+// ----------------- Config -----------------
+const API_BASE = import.meta.env.VITE_API_BASE || "http://localhost:8000";
+
+// ----------------- Defaults -----------------
+const defaultCustomer: CustomerData = {
+  gender: "Male",
+  SeniorCitizen: 0,
+  Partner: "Yes",
+  Dependents: "No",
+  tenure: 24,
+  PhoneService: "Yes",
+  MultipleLines: "No",
+  InternetService: "DSL",
+  OnlineSecurity: "Yes",
+  OnlineBackup: "Yes",
+  DeviceProtection: "No",
+  TechSupport: "Yes",
+  StreamingTV: "No",
+  StreamingMovies: "No",
+  Contract: "One year",
+  PaperlessBilling: "Yes",
+  PaymentMethod: "Mailed check",
+  MonthlyCharges: 59.9,
+  TotalCharges: 1400.0,
+};
+
+// Small helper
+const classNames = (...xs: (string | undefined | null | false)[]) =>
+  xs.filter(Boolean).join(" ");
+
+// ----------------- Component -----------------
+export default function App() {
+  const [customer, setCustomer] = useState<CustomerData>(defaultCustomer);
+  const [loading, setLoading] = useState(false);
+  const [explaining, setExplaining] = useState(false);
+  const [pred, setPred] = useState<PredictionResponse | null>(null);
+  const [exp, setExp] = useState<ExplainResponse | null>(null);
+  const [health, setHealth] = useState<any>(null);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    fetch(`${API_BASE}/`)
+      .then((r) => r.json())
+      .then(setHealth)
+      .catch(() => setHealth({ status: "error" }));
+  }, []);
+
+  const probabilityPct = useMemo(
+    () => (pred ? Math.round(pred.churn_probability * 100) : null),
+    [pred]
+  );
+
+  async function onPredict() {
+    setError(null);
+    setPred(null);
+    setLoading(true);
+    try {
+      const r = await fetch(`${API_BASE}/predict`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(customer),
+      });
+      const j = (await r.json()) as PredictionResponse;
+      setPred(j);
+    } catch (e: any) {
+      setError(e?.message || "Prediction failed");
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  async function onExplain() {
+    setError(null);
+    setExp(null);
+    setExplaining(true);
+    try {
+      const url = new URL(`${API_BASE}/explain`);
+      url.searchParams.set("top_k", "6");
+      const r = await fetch(url.toString(), {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(customer),
+      });
+      const j = (await r.json()) as ExplainResponse;
+      setExp(j);
+    } catch (e: any) {
+      setError(e?.message || "Explain failed");
+    } finally {
+      setExplaining(false);
+    }
+  }
+
+  function update<K extends keyof CustomerData>(key: K, v: CustomerData[K]) {
+    setCustomer((c) => ({ ...c, [key]: v }));
+  }
+
+  return (
+    <div className="min-h-screen bg-gray-50 text-gray-900">
+      <header className="sticky top-0 z-10 bg-white/80 backdrop-blur border-b">
+        <div className="mx-auto max-w-6xl px-4 py-4 flex items-center justify-between">
+          <h1 className="text-xl sm:text-2xl font-semibold tracking-tight">
+            RetentionPulse — Churn Scoring
+          </h1>
+          <div
+            className={classNames(
+              "px-3 py-1 rounded-full text-sm",
+              health?.status === "ok"
+                ? "bg-emerald-100 text-emerald-800"
+                : "bg-rose-100 text-rose-800"
+            )}
+          >
+            API: {health?.status || "checking"}
+          </div>
+        </div>
+      </header>
+
+      <main className="mx-auto max-w-6xl px-4 py-6 grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* Form */}
+        <section className="bg-white rounded-2xl shadow p-5">
+          <h2 className="text-lg font-medium mb-4">Customer Features</h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <Select
+              label="Gender"
+              value={customer.gender}
+              onChange={(v) => update("gender", v)}
+              options={["Male", "Female"]}
+            />
+
+            <Select
+              label="Senior Citizen"
+              value={String(customer.SeniorCitizen)}
+              onChange={(v) => update("SeniorCitizen", Number(v))}
+              options={["0", "1"]}
+            />
+            <Select
+              label="Partner"
+              value={customer.Partner}
+              onChange={(v) => update("Partner", v as YesNo)}
+              options={["Yes", "No"]}
+            />
+            <Select
+              label="Dependents"
+              value={customer.Dependents}
+              onChange={(v) => update("Dependents", v as YesNo)}
+              options={["Yes", "No"]}
+            />
+
+            <NumberInput
+              label="Tenure (months)"
+              value={customer.tenure}
+              onChange={(v) => update("tenure", v)}
+              min={0}
+            />
+            <Select
+              label="Phone Service"
+              value={customer.PhoneService}
+              onChange={(v) => update("PhoneService", v as YesNo)}
+              options={["Yes", "No"]}
+            />
+
+            <Select
+              label="Multiple Lines"
+              value={customer.MultipleLines}
+              onChange={(v) => update("MultipleLines", v)}
+              options={["No", "Yes", "No phone service"]}
+            />
+            <Select
+              label="Internet Service"
+              value={customer.InternetService}
+              onChange={(v) =>
+                update("InternetService", v as InternetServiceType)
+              }
+              options={["DSL", "Fiber optic", "No"]}
+            />
+
+            <Select
+              label="Online Security"
+              value={customer.OnlineSecurity}
+              onChange={(v) => update("OnlineSecurity", v)}
+              options={["Yes", "No", "No internet service"]}
+            />
+            <Select
+              label="Online Backup"
+              value={customer.OnlineBackup}
+              onChange={(v) => update("OnlineBackup", v)}
+              options={["Yes", "No", "No internet service"]}
+            />
+
+            <Select
+              label="Device Protection"
+              value={customer.DeviceProtection}
+              onChange={(v) => update("DeviceProtection", v)}
+              options={["Yes", "No", "No internet service"]}
+            />
+            <Select
+              label="Tech Support"
+              value={customer.TechSupport}
+              onChange={(v) => update("TechSupport", v)}
+              options={["Yes", "No", "No internet service"]}
+            />
+
+            <Select
+              label="Streaming TV"
+              value={customer.StreamingTV}
+              onChange={(v) => update("StreamingTV", v)}
+              options={["Yes", "No", "No internet service"]}
+            />
+            <Select
+              label="Streaming Movies"
+              value={customer.StreamingMovies}
+              onChange={(v) => update("StreamingMovies", v)}
+              options={["Yes", "No", "No internet service"]}
+            />
+
+            <Select
+              label="Contract"
+              value={customer.Contract}
+              onChange={(v) => update("Contract", v as ContractType)}
+              options={["Month-to-month", "One year", "Two year"]}
+            />
+            <Select
+              label="Paperless Billing"
+              value={customer.PaperlessBilling}
+              onChange={(v) => update("PaperlessBilling", v as YesNo)}
+              options={["Yes", "No"]}
+            />
+
+            <Text
+              label="Payment Method"
+              value={customer.PaymentMethod}
+              onChange={(v) => update("PaymentMethod", v)}
+            />
+            <NumberInput
+              label="Monthly Charges ($)"
+              value={customer.MonthlyCharges}
+              onChange={(v) => update("MonthlyCharges", v)}
+              step={0.1}
+              min={0}
+            />
+            <NumberInput
+              label="Total Charges ($)"
+              value={customer.TotalCharges}
+              onChange={(v) => update("TotalCharges", v)}
+              step={0.1}
+              min={0}
+            />
+          </div>
+
+          <div className="mt-5 flex flex-wrap gap-3">
+            <button
+              onClick={onPredict}
+              disabled={loading}
+              className={classNames(
+                "px-4 py-2 rounded-xl shadow text-white",
+                loading ? "bg-gray-400" : "bg-indigo-600 hover:bg-indigo-700"
+              )}
+            >
+              {loading ? "Scoring..." : "Predict churn"}
+            </button>
+            <button
+              onClick={onExplain}
+              disabled={explaining}
+              className={classNames(
+                "px-4 py-2 rounded-xl shadow border",
+                explaining ? "bg-gray-100" : "bg-white hover:bg-gray-50"
+              )}
+            >
+              {explaining ? "Explaining..." : "Explain (Top-6)"}
+            </button>
+            <button
+              onClick={() => {
+                setCustomer(defaultCustomer);
+                setPred(null);
+                setExp(null);
+                setError(null);
+              }}
+              className="px-4 py-2 rounded-xl shadow border bg-white hover:bg-gray-50"
+            >
+              Reset
+            </button>
+          </div>
+
+          {error && <p className="mt-3 text-sm text-rose-600">{error}</p>}
+        </section>
+
+        {/* Results */}
+        <section className="bg-white rounded-2xl shadow p-5">
+          <h2 className="text-lg font-medium mb-4">Results</h2>
+
+          <div className="border rounded-xl p-4 mb-4">
+            <div className="flex items-center justify-between">
+              <div className="text-sm text-gray-600">Decision threshold</div>
+              <div className="text-sm font-medium">
+                {pred?.threshold ?? health?.decision_threshold ?? 0.5}
+              </div>
+            </div>
+            <div className="mt-2">
+              <div className="text-sm text-gray-600">Churn probability</div>
+              <div className="mt-1 h-3 w-full bg-gray-100 rounded-full overflow-hidden">
+                <div
+                  className="h-3 bg-indigo-600"
+                  style={{ width: `${probabilityPct ?? 0}%` }}
+                />
+              </div>
+              <div className="mt-1 text-sm font-semibold">
+                {pred ? `${(pred.churn_probability * 100).toFixed(1)}%` : "–"}
+              </div>
+            </div>
+            <div className="mt-2">
+              <span
+                className={classNames(
+                  "inline-flex items-center px-3 py-1 rounded-full text-sm",
+                  pred?.prediction === "Churn"
+                    ? "bg-rose-100 text-rose-800"
+                    : pred?.prediction === "No Churn"
+                    ? "bg-emerald-100 text-emerald-800"
+                    : "bg-gray-100 text-gray-700"
+                )}
+              >
+                {pred?.prediction ?? "Awaiting prediction"}
+              </span>
+            </div>
+          </div>
+
+          <div className="border rounded-xl p-4">
+            <div className="text-sm text-gray-600 mb-2">
+              Top feature contributions (|SHAP|)
+            </div>
+            {!exp?.top_features && (
+              <div className="text-sm text-gray-500">
+                Run Explain to see feature contributions.
+              </div>
+            )}
+            {exp?.error && (
+              <div className="text-sm text-rose-600">{exp.error}</div>
+            )}
+            {exp?.top_features && (
+              <ul className="space-y-2">
+                {exp.top_features.map((f, i) => (
+                  <li key={i} className="grid grid-cols-12 gap-2 items-center">
+                    <div className="col-span-5 truncate text-sm font-medium">
+                      {f.name}
+                    </div>
+                    <div className="col-span-5">
+                      <div className="h-2 w-full bg-gray-100 rounded">
+                        <div
+                          className="h-2 bg-gray-900 rounded"
+                          style={{
+                            width: `${Math.min(
+                              100,
+                              Math.abs(f.abs_shap) * 100
+                            )}%`,
+                          }}
+                        />
+                      </div>
+                    </div>
+                    <div className="col-span-2 text-right text-xs text-gray-600">
+                      {f.shap.toFixed(4)}
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
+        </section>
+      </main>
+
+      <footer className="mx-auto max-w-6xl px-4 py-8 text-xs text-gray-500">
+        <div>
+          API Base: <code>{API_BASE}</code>
+        </div>
+      </footer>
+    </div>
+  );
+}
+
+// ----------------- UI primitives -----------------
+function Label({
+  htmlFor,
+  children,
+}: {
+  htmlFor?: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <label
+      htmlFor={htmlFor}
+      className="block text-sm font-medium text-gray-700 mb-1"
+    >
+      {children}
+    </label>
+  );
+}
+
+function Text({
+  label,
+  value,
+  onChange,
+}: {
+  label: string;
+  value: string;
+  onChange: (v: string) => void;
+}) {
+  const id = useMemo(() => `t-${label.replace(/\s+/g, "-")}`, [label]);
+  return (
+    <div>
+      <Label htmlFor={id}>{label}</Label>
+      <input
+        id={id}
+        className="w-full rounded-xl border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+      />
+    </div>
+  );
+}
+
+// function Number({
+//   label,
+//   value,
+//   onChange,
+//   step = 1,
+//   min,
+// }: {
+//   label: string;
+//   value: number;
+//   onChange: (v: number) => void;
+//   step?: number;
+//   min?: number;
+// }) {
+//   const id = useMemo(() => `n-${label.replace(/\s+/g, "-")}`, [label]);
+//   return (
+//     <div>
+//       <Label htmlFor={id}>{label}</Label>
+//       <input
+//         id={id}
+//         type="number"
+//         step={step}
+//         min={min}
+//         className="w-full rounded-xl border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+//         value={Number.isFinite(value) ? value : 0}
+//         onChange={(e) => onChange(Number(e.target.value))}
+//       />
+//     </div>
+//   );
+// }
+
+// function Select({
+//   label,
+//   value,
+//   onChange,
+//   options,
+// }: {
+//   label: string;
+//   value: string;
+//   onChange: (v: string) => void;
+//   options: string[];
+// }) {
+//   const id = useMemo(() => `s-${label.replace(/\s+/g, "-")}`, [label]);
+//   return (
+//     <div>
+//       <Label htmlFor={id}>{label}</Label>
+//       <select
+//         id={id}
+//         className="w-full rounded-xl border border-gray-300 px-3 py-2 bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
+//         value={value}
+//         onChange={(e) => onChange(e.target.value)}
+//       >
+//         {options.map((o) => (
+//           <option key={o} value={o}>
+//             {o}
+//           </option>
+//         ))}
+//       </select>
+//     </div>
+//   );
+// }

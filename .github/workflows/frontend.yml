@@ -1,0 +1,67 @@
+name: Frontend CI/CD
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "ui/**"
+      - ".github/workflows/frontend.yml"
+  pull_request:
+    branches: [main]
+    paths:
+      - "ui/**"
+      - ".github/workflows/frontend.yml"
+  workflow_dispatch:
+
+env:
+  NODE_VERSION: "22"
+  # Point this to your gateway in prod. For local builds on CI, you can keep localhost or a placeholder.
+  VITE_API_BASE: "http://localhost:8000"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ui/retentionpulse-ui
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Use Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: "npm"
+          cache-dependency-path: ui/retentionpulse-ui/package-lock.json
+
+      - name: Install deps
+        run: npm ci
+
+      - name: Build
+        env:
+          VITE_API_BASE: ${{ env.VITE_API_BASE }}
+        run: npm run build
+
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: retentionpulse-ui-dist
+          path: ui/retentionpulse-ui/dist
+
+  # # Optional Netlify deploy (requires secrets)
+  # deploy-netlify:
+  #   needs: build
+  #   runs-on: ubuntu-latest
+  #   if: ${{ secrets.NETLIFY_AUTH_TOKEN && secrets.NETLIFY_SITE_ID }}
+  #   steps:
+  #     - uses: actions/download-artifact@v4
+  #       with:
+  #         name: retentionpulse-ui-dist
+  #         path: dist
+
+  #     - name: Deploy to Netlify
+  #       uses: netlify/actions/cli@v4
+  #       with:
+  #         args: deploy --dir=dist --prod --site ${{ secrets.NETLIFY_SITE_ID }}
+  #       env:
+  #         NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
