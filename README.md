@@ -1,16 +1,14 @@
----
-
 # RetentionPulse — An Interpretable Churn Prediction System
 
 **RetentionPulse** is an end-to-end machine learning system that predicts customer churn for a subscription business and explains **why** a prediction was made using SHAP. It’s built as a small set of FastAPI microservices behind a gateway, with a React + Vite TypeScript UI.
 
 ## ✨ Highlights
 
-* **Model**: LightGBM (scikit-learn pipeline) serialized with `joblib`
-* **Interpretability**: SHAP feature attributions for each prediction
-* **APIs**: FastAPI microservices (prediction + explain) behind a gateway
-* **Frontend**: React + Vite (TypeScript), Tailwind
-* **Deployability**: Works locally and on Render (three backend services + static UI)
+- **Model**: LightGBM (scikit-learn pipeline) serialized with `joblib`
+- **Interpretability**: SHAP feature attributions for each prediction
+- **APIs**: FastAPI microservices (prediction + explain) behind a gateway
+- **Frontend**: React + Vite (TypeScript), Tailwind
+- **Deployability**: Works locally and on Render (three backend services + static UI)
 
 ---
 
