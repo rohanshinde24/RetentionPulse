@@ -605,6 +605,7 @@ export default function App() {
         <div>
           API Base: <code>{API_BASE}</code>
         </div>
+        {error && <div className="mt-2 text-rose-600">Error: {error}</div>}
       </footer>
     </div>
   );

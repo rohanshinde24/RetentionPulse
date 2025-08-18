@@ -138,9 +138,12 @@ from fastapi.middleware.cors import CORSMiddleware
 # --- Config (env overrides are great for Docker/Render) ---
 PREDICT_URL = os.getenv("PREDICT_URL", "http://localhost:8001")
 EXPLAIN_URL = os.getenv("EXPLAIN_URL", "http://localhost:8002")
-RETRIES = int(os.getenv("GATEWAY_RETRIES", "1"))
+# RETRIES = int(os.getenv("GATEWAY_RETRIES", "1"))
 
-TIMEOUT = httpx.Timeout(10.0, connect=5.0)
+# TIMEOUT = httpx.Timeout(10.0, connect=5.0)
+TIMEOUT = httpx.Timeout(connect=10.0, read=30.0, write=30.0, pool=5.0)
+RETRIES = int(os.getenv("GATEWAY_RETRIES", "2"))
+
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
