@@ -1,3 +1,16 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+:root {
+  --bg-layer-1: rgba(79, 70, 229, 0.08);   /* indigo-600 */
+  --bg-layer-2: rgba(16, 185, 129, 0.08);  /* emerald-500 */
+  --bg-layer-3: rgba(59, 130, 246, 0.08);  /* blue-500 */
+}
+
+body {
+  background-image:
+    radial-gradient(circle at 20% 10%, var(--bg-layer-1), transparent 25%),
+    radial-gradient(circle at 80% 30%, var(--bg-layer-2), transparent 25%),
+    radial-gradient(circle at 30% 80%, var(--bg-layer-3), transparent 25%);
+}

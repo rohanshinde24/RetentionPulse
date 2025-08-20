@@ -314,8 +314,8 @@ export default function App() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 text-gray-900">
-      <header className="sticky top-0 z-10 bg-white/80 backdrop-blur border-b">
+    <div className="min-h-screen text-gray-900">
+      <header className="sticky top-0 z-10 bg-white/70 backdrop-blur-md border-b">
         <div className="mx-auto max-w-6xl px-4 py-4 flex items-center justify-between">
           <h1 className="text-xl sm:text-2xl font-semibold tracking-tight">
             RetentionPulse — Churn Scoring
@@ -324,8 +324,8 @@ export default function App() {
         </div>
       </header>
 
-      <main className="mx-auto max-w-6xl px-4 py-6 grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <section className="bg-white rounded-2xl shadow p-5">
+      <main className="mx-auto max-w-6xl px-4 py-8 grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <section className="bg-white/90 backdrop-blur rounded-2xl shadow p-6">
           <h2 className="text-lg font-medium mb-4">Customer Features</h2>
           <FeatureForm value={customer} onChange={setCustomer} />
 

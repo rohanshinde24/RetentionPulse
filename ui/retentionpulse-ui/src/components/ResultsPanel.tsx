@@ -1,4 +1,5 @@
 import Gauge from "./Gauge";
+import CircularGauge from "./CircularGauge";
 import PredictionBadge from "./PredictionBadge";
 import ShapBars from "./ShapBars";
 
@@ -30,22 +31,18 @@ export default function ResultsPanel({
   const label = prob !== null ? `${(prob * 100).toFixed(1)}%` : "—";
 
   return (
-    <section className="bg-white rounded-2xl shadow p-5">
+    <section className="bg-white/90 backdrop-blur rounded-2xl shadow p-5">
       <h2 className="text-lg font-medium mb-4">Results</h2>
 
-      <div className="border rounded-xl p-4 mb-4">
-        <div className="flex items-center justify-between">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-4">
+        <div className="border rounded-xl p-4 flex items-center justify-center">
+          <CircularGauge percent={percent} label="Churn probability" />
+        </div>
+        <div className="border rounded-xl p-4 flex flex-col justify-center">
           <div className="text-sm text-gray-600">Decision threshold</div>
-          <div className="text-sm font-medium">
-            {pred?.threshold ?? decisionThreshold ?? 0.5}
-          </div>
+          <div className="text-xl font-semibold mt-1">{pred?.threshold ?? decisionThreshold ?? 0.5}</div>
         </div>
-        <div className="mt-2">
-          <div className="text-sm text-gray-600">Churn probability</div>
-          <Gauge percent={percent} />
-          <div className="mt-1 text-sm font-semibold">{label}</div>
-        </div>
-        <div className="mt-2">
+        <div className="border rounded-xl p-4 flex items-center justify-center">
           <PredictionBadge value={pred?.prediction} />
         </div>
       </div>
