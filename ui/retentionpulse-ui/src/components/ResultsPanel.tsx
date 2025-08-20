@@ -2,6 +2,7 @@ import Gauge from "./Gauge";
 import CircularGauge from "./CircularGauge";
 import PredictionBadge from "./PredictionBadge";
 import ShapBars from "./ShapBars";
+import Card from "./Card";
 
 type Prediction = {
   prediction: string;
@@ -31,25 +32,23 @@ export default function ResultsPanel({
   const label = prob !== null ? `${(prob * 100).toFixed(1)}%` : "—";
 
   return (
-    <section className="bg-white/90 backdrop-blur rounded-2xl shadow p-5">
+    <section className="">
       <h2 className="text-lg font-medium mb-4">Results</h2>
 
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-4">
-        <div className="border rounded-xl p-4 flex items-center justify-center">
+        <Card className="flex items-center justify-center">
           <CircularGauge percent={percent} label="Churn probability" />
-        </div>
-        <div className="border rounded-xl p-4 flex flex-col justify-center">
+        </Card>
+        <Card>
           <div className="text-sm text-gray-600">Decision threshold</div>
-          <div className="text-xl font-semibold mt-1">
-            {pred?.threshold ?? decisionThreshold ?? 0.5}
-          </div>
-        </div>
-        <div className="border rounded-xl p-4 flex items-center justify-center">
+          <div className="text-xl font-semibold mt-1">{pred?.threshold ?? decisionThreshold ?? 0.5}</div>
+        </Card>
+        <Card className="flex items-center justify-center">
           <PredictionBadge value={pred?.prediction} />
-        </div>
+        </Card>
       </div>
 
-      <div className="border rounded-xl p-4">
+      <Card>
         <div className="text-sm text-gray-600 mb-2">
           Top feature contributions (|SHAP|)
         </div>
@@ -58,7 +57,7 @@ export default function ResultsPanel({
         ) : (
           <ShapBars items={exp?.top_features} />
         )}
-      </div>
+      </Card>
     </section>
   );
 }

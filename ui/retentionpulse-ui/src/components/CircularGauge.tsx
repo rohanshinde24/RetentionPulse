@@ -36,6 +36,7 @@ export default function CircularGauge({
           strokeLinecap="round"
           strokeWidth={stroke}
           strokeDasharray={`${dash} ${circumference - dash}`}
+          className="transition-[stroke-dasharray] duration-700 ease-out"
         />
       </svg>
       <div className="absolute inset-0 flex items-center justify-center flex-col">

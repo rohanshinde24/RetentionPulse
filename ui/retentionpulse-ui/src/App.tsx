@@ -175,6 +175,8 @@ import FeatureForm from "./components/FeatureForm";
 import ResultsPanel from "./components/ResultsPanel";
 import FeaturePresets from "./components/FeaturePresets";
 import { explain, gatewayHealth, predict } from "./services/api";
+import Card from "./components/Card";
+import Button from "./components/Button";
 
 // ----------------- Types -----------------
 export type YesNo = "Yes" | "No";
@@ -326,50 +328,36 @@ export default function App() {
       </header>
 
       <main className="mx-auto max-w-6xl px-4 py-8 grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <section className="bg-white/90 backdrop-blur rounded-2xl shadow p-6">
-          <h2 className="text-lg font-medium mb-4">Customer Features</h2>
-          <div className="mb-4">
-            <FeaturePresets
-              onApply={(patch) => setCustomer((c) => ({ ...c, ...patch }))}
-            />
-          </div>
-          <FeatureForm value={customer} onChange={setCustomer} />
+        <section>
+          <Card>
+            <h2 className="text-lg font-medium mb-4">Customer Features</h2>
+            <div className="mb-4">
+              <FeaturePresets onApply={(patch) => setCustomer((c) => ({ ...c, ...patch }))} />
+            </div>
+            <FeatureForm value={customer} onChange={setCustomer} />
 
-          <div className="mt-5 flex flex-wrap gap-3">
-            <button
-              onClick={onPredict}
-              disabled={loading}
-              className={classNames(
-                "px-4 py-2 rounded-xl shadow text-white",
-                loading ? "bg-gray-400" : "bg-indigo-600 hover:bg-indigo-700"
-              )}
-            >
-              {loading ? "Scoring..." : "Predict churn"}
-            </button>
-            <button
-              onClick={onExplain}
-              disabled={explaining}
-              className={classNames(
-                "px-4 py-2 rounded-xl shadow border",
-                explaining ? "bg-gray-100" : "bg-white hover:bg-gray-50"
-              )}
-            >
-              {explaining ? "Explaining..." : "Explain (Top-6)"}
-            </button>
-            <button
-              onClick={() => {
-                setCustomer(defaultCustomer);
-                setPred(null);
-                setExp(null);
-                setError(null);
-              }}
-              className="px-4 py-2 rounded-xl shadow border bg-white hover:bg-gray-50"
-            >
-              Reset
-            </button>
-          </div>
+            <div className="mt-5 flex flex-wrap gap-3">
+              <Button onClick={onPredict} disabled={loading}>
+                {loading ? "Scoring..." : "Predict churn"}
+              </Button>
+              <Button onClick={onExplain} disabled={explaining} variant="secondary">
+                {explaining ? "Explaining..." : "Explain (Top-6)"}
+              </Button>
+              <Button
+                variant="secondary"
+                onClick={() => {
+                  setCustomer(defaultCustomer);
+                  setPred(null);
+                  setExp(null);
+                  setError(null);
+                }}
+              >
+                Reset
+              </Button>
+            </div>
 
-          {error && <p className="mt-3 text-sm text-rose-600">{error}</p>}
+            {error && <p className="mt-3 text-sm text-rose-600">{error}</p>}
+          </Card>
         </section>
 
         <ResultsPanel

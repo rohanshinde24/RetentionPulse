@@ -20,7 +20,10 @@ function ShapBars({ items }: { items?: Shap[] }) {
             </div>
             <div className="col-span-5">
               <div className="h-2 w-full bg-gray-100 rounded">
-                <div className={`h-2 rounded ${color}`} style={{ width: `${pct}%` }} />
+                <div
+                  className={`h-2 rounded ${color}`}
+                  style={{ width: `${pct}%` }}
+                />
               </div>
             </div>
             <div className="col-span-2 text-right text-xs text-gray-600">
