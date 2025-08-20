@@ -170,8 +170,10 @@
 
 // export default App;import React, { useEffect, useMemo, useState } from "react";
 import React, { useEffect, useMemo, useState } from "react";
-import Select from "./components/Select";
-import NumberInput from "./components/NumberInput"; // assuming you added this too
+import HealthBadge from "./components/HealthBadge";
+import FeatureForm from "./components/FeatureForm";
+import ResultsPanel from "./components/ResultsPanel";
+import { explain, gatewayHealth, predict } from "./services/api";
 
 // ----------------- Types -----------------
 export type YesNo = "Yes" | "No";
@@ -252,8 +254,7 @@ export default function App() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    fetch(`${API_BASE}/`)
-      .then((r) => r.json())
+    gatewayHealth()
       .then(setHealth)
       .catch(() => setHealth({ status: "error" }));
   }, []);
@@ -285,12 +286,7 @@ export default function App() {
     setPred(null);
     setLoading(true);
     try {
-      const r = await fetch(`${API_BASE}/predict`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(customer),
-      });
-      const j = (await r.json()) as PredictionResponse;
+      const j = (await predict(customer)) as PredictionResponse;
       setPred(j);
     } catch (e: any) {
       setError(e?.message || "Prediction failed");
@@ -304,14 +300,7 @@ export default function App() {
     setExp(null);
     setExplaining(true);
     try {
-      const url = new URL(`${API_BASE}/explain`);
-      url.searchParams.set("top_k", "6");
-      const r = await fetch(url.toString(), {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(customer),
-      });
-      const j = (await r.json()) as ExplainResponse;
+      const j = (await explain(customer, 6)) as ExplainResponse;
       setExp(j);
     } catch (e: any) {
       setError(e?.message || "Explain failed");
@@ -331,150 +320,14 @@ export default function App() {
           <h1 className="text-xl sm:text-2xl font-semibold tracking-tight">
             RetentionPulse — Churn Scoring
           </h1>
-          <div
-            className={classNames(
-              "px-3 py-1 rounded-full text-sm",
-              health?.status === "ok"
-                ? "bg-emerald-100 text-emerald-800"
-                : "bg-rose-100 text-rose-800"
-            )}
-          >
-            API: {health?.status || "checking"}
-          </div>
+          <HealthBadge status={health?.status} />
         </div>
       </header>
 
       <main className="mx-auto max-w-6xl px-4 py-6 grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Form */}
         <section className="bg-white rounded-2xl shadow p-5">
           <h2 className="text-lg font-medium mb-4">Customer Features</h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <Select
-              label="Gender"
-              value={customer.gender}
-              onChange={(v) => update("gender", v)}
-              options={["Male", "Female"]}
-            />
-
-            <Select
-              label="Senior Citizen"
-              value={String(customer.SeniorCitizen)}
-              onChange={(v) => update("SeniorCitizen", Number(v))}
-              options={["0", "1"]}
-            />
-            <Select
-              label="Partner"
-              value={customer.Partner}
-              onChange={(v) => update("Partner", v as YesNo)}
-              options={["Yes", "No"]}
-            />
-            <Select
-              label="Dependents"
-              value={customer.Dependents}
-              onChange={(v) => update("Dependents", v as YesNo)}
-              options={["Yes", "No"]}
-            />
-
-            <NumberInput
-              label="Tenure (months)"
-              value={customer.tenure}
-              onChange={(v) => update("tenure", v)}
-              min={0}
-            />
-            <Select
-              label="Phone Service"
-              value={customer.PhoneService}
-              onChange={(v) => update("PhoneService", v as YesNo)}
-              options={["Yes", "No"]}
-            />
-
-            <Select
-              label="Multiple Lines"
-              value={customer.MultipleLines}
-              onChange={(v) => update("MultipleLines", v)}
-              options={["No", "Yes", "No phone service"]}
-            />
-            <Select
-              label="Internet Service"
-              value={customer.InternetService}
-              onChange={(v) =>
-                update("InternetService", v as InternetServiceType)
-              }
-              options={["DSL", "Fiber optic", "No"]}
-            />
-
-            <Select
-              label="Online Security"
-              value={customer.OnlineSecurity}
-              onChange={(v) => update("OnlineSecurity", v)}
-              options={["Yes", "No", "No internet service"]}
-            />
-            <Select
-              label="Online Backup"
-              value={customer.OnlineBackup}
-              onChange={(v) => update("OnlineBackup", v)}
-              options={["Yes", "No", "No internet service"]}
-            />
-
-            <Select
-              label="Device Protection"
-              value={customer.DeviceProtection}
-              onChange={(v) => update("DeviceProtection", v)}
-              options={["Yes", "No", "No internet service"]}
-            />
-            <Select
-              label="Tech Support"
-              value={customer.TechSupport}
-              onChange={(v) => update("TechSupport", v)}
-              options={["Yes", "No", "No internet service"]}
-            />
-
-            <Select
-              label="Streaming TV"
-              value={customer.StreamingTV}
-              onChange={(v) => update("StreamingTV", v)}
-              options={["Yes", "No", "No internet service"]}
-            />
-            <Select
-              label="Streaming Movies"
-              value={customer.StreamingMovies}
-              onChange={(v) => update("StreamingMovies", v)}
-              options={["Yes", "No", "No internet service"]}
-            />
-
-            <Select
-              label="Contract"
-              value={customer.Contract}
-              onChange={(v) => update("Contract", v as ContractType)}
-              options={["Month-to-month", "One year", "Two year"]}
-            />
-            <Select
-              label="Paperless Billing"
-              value={customer.PaperlessBilling}
-              onChange={(v) => update("PaperlessBilling", v as YesNo)}
-              options={["Yes", "No"]}
-            />
-
-            <Text
-              label="Payment Method"
-              value={customer.PaymentMethod}
-              onChange={(v) => update("PaymentMethod", v)}
-            />
-            <NumberInput
-              label="Monthly Charges ($)"
-              value={customer.MonthlyCharges}
-              onChange={(v) => update("MonthlyCharges", v)}
-              step={0.1}
-              min={0}
-            />
-            <NumberInput
-              label="Total Charges ($)"
-              value={customer.TotalCharges}
-              onChange={(v) => update("TotalCharges", v)}
-              step={0.1}
-              min={0}
-            />
-          </div>
+          <FeatureForm value={customer} onChange={setCustomer} />
 
           <div className="mt-5 flex flex-wrap gap-3">
             <button
@@ -513,92 +366,11 @@ export default function App() {
           {error && <p className="mt-3 text-sm text-rose-600">{error}</p>}
         </section>
 
-        {/* Results */}
-        <section className="bg-white rounded-2xl shadow p-5">
-          <h2 className="text-lg font-medium mb-4">Results</h2>
-
-          <div className="border rounded-xl p-4 mb-4">
-            <div className="flex items-center justify-between">
-              <div className="text-sm text-gray-600">Decision threshold</div>
-              <div className="text-sm font-medium">
-                {pred?.threshold ?? health?.decision_threshold ?? 0.5}
-              </div>
-            </div>
-            <div className="mt-2">
-              <div className="text-sm text-gray-600">Churn probability</div>
-              <div className="mt-1 h-3 w-full bg-gray-100 rounded-full overflow-hidden">
-                <div
-                  className="h-3 bg-indigo-600"
-                  style={{
-                    width:
-                      probabilityPct !== null
-                        ? `${Math.min(100, Math.max(0, probabilityPct))}%`
-                        : "0%",
-                  }}
-                />
-              </div>
-
-              <div className="mt-1 text-sm font-semibold">
-                {probabilityLabel}
-              </div>
-            </div>
-            <div className="mt-2">
-              <span
-                className={classNames(
-                  "inline-flex items-center px-3 py-1 rounded-full text-sm",
-                  pred?.prediction === "Churn"
-                    ? "bg-rose-100 text-rose-800"
-                    : pred?.prediction === "No Churn"
-                    ? "bg-emerald-100 text-emerald-800"
-                    : "bg-gray-100 text-gray-700"
-                )}
-              >
-                {pred?.prediction ?? "Awaiting prediction"}
-              </span>
-            </div>
-          </div>
-
-          <div className="border rounded-xl p-4">
-            <div className="text-sm text-gray-600 mb-2">
-              Top feature contributions (|SHAP|)
-            </div>
-            {!exp?.top_features && (
-              <div className="text-sm text-gray-500">
-                Run Explain to see feature contributions.
-              </div>
-            )}
-            {exp?.error && (
-              <div className="text-sm text-rose-600">{exp.error}</div>
-            )}
-            {exp?.top_features && (
-              <ul className="space-y-2">
-                {exp.top_features.map((f, i) => (
-                  <li key={i} className="grid grid-cols-12 gap-2 items-center">
-                    <div className="col-span-5 truncate text-sm font-medium">
-                      {f.name}
-                    </div>
-                    <div className="col-span-5">
-                      <div className="h-2 w-full bg-gray-100 rounded">
-                        <div
-                          className="h-2 bg-gray-900 rounded"
-                          style={{
-                            width: `${Math.min(
-                              100,
-                              Math.abs(f.abs_shap) * 100
-                            )}%`,
-                          }}
-                        />
-                      </div>
-                    </div>
-                    <div className="col-span-2 text-right text-xs text-gray-600">
-                      {f.shap.toFixed(4)}
-                    </div>
-                  </li>
-                ))}
-              </ul>
-            )}
-          </div>
-        </section>
+        <ResultsPanel
+          pred={pred}
+          exp={exp}
+          decisionThreshold={health?.decision_threshold}
+        />
       </main>
 
       <footer className="mx-auto max-w-6xl px-4 py-8 text-xs text-gray-500">
