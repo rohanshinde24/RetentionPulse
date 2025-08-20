@@ -5,7 +5,12 @@ type Props = {
   label?: string;
 };
 
-export default function CircularGauge({ percent, size = 140, stroke = 12, label }: Props) {
+export default function CircularGauge({
+  percent,
+  size = 140,
+  stroke = 12,
+  label,
+}: Props) {
   const pct = Math.min(100, Math.max(0, percent ?? 0));
   const radius = (size - stroke) / 2;
   const circumference = 2 * Math.PI * radius;
@@ -42,4 +47,3 @@ export default function CircularGauge({ percent, size = 140, stroke = 12, label 
     </div>
   );
 }
-

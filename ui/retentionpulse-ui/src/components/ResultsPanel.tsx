@@ -40,7 +40,9 @@ export default function ResultsPanel({
         </div>
         <div className="border rounded-xl p-4 flex flex-col justify-center">
           <div className="text-sm text-gray-600">Decision threshold</div>
-          <div className="text-xl font-semibold mt-1">{pred?.threshold ?? decisionThreshold ?? 0.5}</div>
+          <div className="text-xl font-semibold mt-1">
+            {pred?.threshold ?? decisionThreshold ?? 0.5}
+          </div>
         </div>
         <div className="border rounded-xl p-4 flex items-center justify-center">
           <PredictionBadge value={pred?.prediction} />

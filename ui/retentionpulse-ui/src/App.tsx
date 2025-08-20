@@ -173,6 +173,7 @@ import React, { useEffect, useMemo, useState } from "react";
 import HealthBadge from "./components/HealthBadge";
 import FeatureForm from "./components/FeatureForm";
 import ResultsPanel from "./components/ResultsPanel";
+import FeaturePresets from "./components/FeaturePresets";
 import { explain, gatewayHealth, predict } from "./services/api";
 
 // ----------------- Types -----------------
@@ -327,6 +328,11 @@ export default function App() {
       <main className="mx-auto max-w-6xl px-4 py-8 grid grid-cols-1 lg:grid-cols-2 gap-6">
         <section className="bg-white/90 backdrop-blur rounded-2xl shadow p-6">
           <h2 className="text-lg font-medium mb-4">Customer Features</h2>
+          <div className="mb-4">
+            <FeaturePresets
+              onApply={(patch) => setCustomer((c) => ({ ...c, ...patch }))}
+            />
+          </div>
           <FeatureForm value={customer} onChange={setCustomer} />
 
           <div className="mt-5 flex flex-wrap gap-3">

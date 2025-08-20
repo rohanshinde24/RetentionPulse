@@ -10,26 +10,25 @@ function ShapBars({ items }: { items?: Shap[] }) {
   }
   return (
     <ul className="space-y-2">
-      {items.map((f, i) => (
-        <li key={i} className="grid grid-cols-12 gap-2 items-center">
-          <div className="col-span-5 truncate text-sm font-medium">
-            {f.name}
-          </div>
-          <div className="col-span-5">
-            <div className="h-2 w-full bg-gray-100 rounded">
-              <div
-                className="h-2 bg-gray-900 rounded"
-                style={{
-                  width: `${Math.min(100, Math.abs(f.abs_shap) * 100)}%`,
-                }}
-              />
+      {items.map((f, i) => {
+        const pct = Math.min(100, Math.abs(f.abs_shap) * 100);
+        const color = f.shap >= 0 ? "bg-rose-500" : "bg-emerald-500";
+        return (
+          <li key={i} className="grid grid-cols-12 gap-2 items-center">
+            <div className="col-span-5 truncate text-sm font-medium">
+              {f.name}
             </div>
-          </div>
-          <div className="col-span-2 text-right text-xs text-gray-600">
-            {f.shap.toFixed(4)}
-          </div>
-        </li>
-      ))}
+            <div className="col-span-5">
+              <div className="h-2 w-full bg-gray-100 rounded">
+                <div className={`h-2 rounded ${color}`} style={{ width: `${pct}%` }} />
+              </div>
+            </div>
+            <div className="col-span-2 text-right text-xs text-gray-600">
+              {f.shap.toFixed(4)}
+            </div>
+          </li>
+        );
+      })}
     </ul>
   );
 }
