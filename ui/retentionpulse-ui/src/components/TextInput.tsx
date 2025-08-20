@@ -10,7 +10,7 @@ function Label({
   return (
     <label
       htmlFor={htmlFor}
-      className="block text-sm font-medium text-gray-700 mb-1"
+      className="block text-sm font-medium text-gray-700 mb-2"
     >
       {children}
     </label>
@@ -32,13 +32,15 @@ function TextInput({
   return (
     <div>
       <Label htmlFor={id}>{label}</Label>
-      <input
-        id={id}
-        placeholder={placeholder}
-        className="w-full rounded-xl border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500"
-        value={value}
-        onChange={(e) => onChange(e.target.value)}
-      />
+      <div className="rounded-xl border border-gray-300 bg-white focus-within:ring-2 focus-within:ring-indigo-500">
+        <input
+          id={id}
+          placeholder={placeholder}
+          className="w-full rounded-xl px-3 py-2 border-0 bg-transparent focus:outline-none focus:ring-0"
+          value={value}
+          onChange={(e) => onChange(e.target.value)}
+        />
+      </div>
     </div>
   );
 }

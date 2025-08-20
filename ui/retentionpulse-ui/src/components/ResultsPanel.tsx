@@ -9,6 +9,7 @@ type Prediction = {
   churn_probability: number;
   threshold: number;
 } | null;
+
 type Explain = {
   top_features?: { name: string; abs_shap: number; shap: number }[];
   error?: string;
@@ -29,7 +30,6 @@ export default function ResultsPanel({
       ? pred!.churn_probability
       : null;
   const percent = prob !== null ? Math.round(prob * 100) : null;
-  const label = prob !== null ? `${(prob * 100).toFixed(1)}%` : "—";
 
   return (
     <section className="">
@@ -41,7 +41,9 @@ export default function ResultsPanel({
         </Card>
         <Card>
           <div className="text-sm text-gray-600">Decision threshold</div>
-          <div className="text-xl font-semibold mt-1">{pred?.threshold ?? decisionThreshold ?? 0.5}</div>
+          <div className="text-xl font-semibold mt-1">
+            {pred?.threshold ?? decisionThreshold ?? 0.5}
+          </div>
         </Card>
         <Card className="flex items-center justify-center">
           <PredictionBadge value={pred?.prediction} />

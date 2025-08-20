@@ -14,11 +14,11 @@ function ShapBars({ items }: { items?: Shap[] }) {
         const pct = Math.min(100, Math.abs(f.abs_shap) * 100);
         const color = f.shap >= 0 ? "bg-rose-500" : "bg-emerald-500";
         return (
-          <li key={i} className="grid grid-cols-12 gap-2 items-center">
-            <div className="col-span-5 truncate text-sm font-medium">
+          <li key={i} className="grid grid-cols-12 items-center gap-1">
+            <div className="col-span-4 truncate text-sm font-medium pr-2">
               {f.name}
             </div>
-            <div className="col-span-5">
+            <div className="col-span-6">
               <div className="h-2 w-full bg-gray-100 rounded">
                 <div
                   className={`h-2 rounded ${color}`}

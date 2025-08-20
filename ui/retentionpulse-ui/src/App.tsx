@@ -255,17 +255,13 @@ export default function App() {
   const [exp, setExp] = useState<ExplainResponse | null>(null);
   const [health, setHealth] = useState<any>(null);
   const [error, setError] = useState<string | null>(null);
+  const [autoExplain, setAutoExplain] = useState<boolean>(true);
 
   useEffect(() => {
     gatewayHealth()
       .then(setHealth)
       .catch(() => setHealth({ status: "error" }));
   }, []);
-
-  // const probabilityPct = useMemo(
-  //   () => (pred ? Math.round(pred.churn_probability * 100) : null),
-  //   [pred]
-  // );
 
   // inside App component:
   const probRaw = pred?.churn_probability;
@@ -284,6 +280,7 @@ export default function App() {
     () => (prob !== null ? `${(prob * 100).toFixed(1)}%` : "—"),
     [prob]
   );
+
   async function onPredict() {
     setError(null);
     setPred(null);
@@ -291,6 +288,12 @@ export default function App() {
     try {
       const j = (await predict(customer)) as PredictionResponse;
       setPred(j);
+      if (autoExplain) {
+        // brief delay so the UI can show the prediction, then fetch explanation
+        setTimeout(() => {
+          onExplain();
+        }, 250);
+      }
     } catch (e: any) {
       setError(e?.message || "Prediction failed");
     } finally {
@@ -332,17 +335,31 @@ export default function App() {
           <Card>
             <h2 className="text-lg font-medium mb-4">Customer Features</h2>
             <div className="mb-4">
-              <FeaturePresets onApply={(patch) => setCustomer((c) => ({ ...c, ...patch }))} />
+              <FeaturePresets
+                onApply={(patch) => setCustomer((c) => ({ ...c, ...patch }))}
+              />
             </div>
             <FeatureForm value={customer} onChange={setCustomer} />
 
-            <div className="mt-5 flex flex-wrap gap-3">
+            <div className="mt-5 flex flex-wrap items-center gap-3">
               <Button onClick={onPredict} disabled={loading}>
                 {loading ? "Scoring..." : "Predict churn"}
               </Button>
-              <Button onClick={onExplain} disabled={explaining} variant="secondary">
+              <Button
+                onClick={onExplain}
+                disabled={explaining}
+                variant="secondary"
+              >
                 {explaining ? "Explaining..." : "Explain (Top-6)"}
               </Button>
+              <label className="flex items-center gap-2 text-sm ml-1">
+                <input
+                  type="checkbox"
+                  checked={autoExplain}
+                  onChange={(e) => setAutoExplain(e.target.checked)}
+                />
+                Auto‑explain after predict
+              </label>
               <Button
                 variant="secondary"
                 onClick={() => {
