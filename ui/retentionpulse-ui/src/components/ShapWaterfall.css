@@ -3,7 +3,9 @@
 .waterfall-node small, .waterfall-connector span { display: block; color: #87948c; font-size: 9px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; }
 .waterfall-node b { display: block; margin-top: 3px; color: #254b3d; font: 600 24px 'Newsreader'; }
 .waterfall-node.final { text-align: right; }
-.waterfall-node.final b { color: #bb5948; }
+.waterfall-node.final.high b { color: #bb5948; }
+.waterfall-node.final.medium b { color: #a96f28; }
+.waterfall-node.final.low b { color: #3f7c56; }
 .waterfall-connector { display: grid; gap: 6px; min-width: 0; }
 .waterfall-connector span { text-align: center; font-size: 8px; }
 .waterfall-connector i { position: relative; display: block; height: 1px; background: #9fada1; }
