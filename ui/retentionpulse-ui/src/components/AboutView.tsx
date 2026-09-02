@@ -5,10 +5,10 @@ export default function AboutView() {
         <p className="eyebrow">Engineering overview</p>
         <h1>An explainable churn-prediction system, built end to end.</h1>
         <p>
-          RetentionPulse is a portfolio project that turns a telecom churn
-          model into a deployable product: a usable React interface, a
-          service-oriented Python API, explainability, tests, containers, and
-          a public Render deployment.
+          RetentionPulse turns a telecom churn model into an explainable,
+          deployable decision-support application: a usable React interface,
+          a service-oriented Python API, explainability, tests, containers,
+          and a public Render deployment.
         </p>
       </div>
       <div className="detail-grid">
