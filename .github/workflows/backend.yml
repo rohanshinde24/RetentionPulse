@@ -56,9 +56,19 @@ jobs:
           MODEL_PATH: ${{ env.MODEL_PATH }}
         run: pytest -q
 
+  integration:
+    name: Docker Compose Integration
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Exercise the real gateway and model services
+        run: bash api/tests/run_integration.sh
+
   docker:
     name: Build (and optionally push) images
-    needs: test
+    needs: [test, integration]
     runs-on: ubuntu-latest
     if: ${{ github.ref == 'refs/heads/main' }}
     steps:

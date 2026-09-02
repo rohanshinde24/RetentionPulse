@@ -1,0 +1,2 @@
+gender,SeniorCitizen,Partner,Dependents,tenure,PhoneService,MultipleLines,InternetService,OnlineSecurity,OnlineBackup,DeviceProtection,TechSupport,StreamingTV,StreamingMovies,Contract,PaperlessBilling,PaymentMethod,MonthlyCharges,TotalCharges
+Male,0,Yes,No,24,Yes,No,DSL,Yes,Yes,No,Yes,No,No,One year,Yes,Mailed check,59.9,1400.0
