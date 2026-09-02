@@ -74,13 +74,25 @@ async def _request_json(method: str, url: str, payload: dict[str, Any] | None = 
         try:
             response = await app.state.client.request(method, url, json=payload)
             if 400 <= response.status_code < 500:
-                detail = response.json().get("detail", response.text)
+                try:
+                    detail = response.json().get("detail", response.text)
+                except ValueError:
+                    detail = response.text or "Upstream request was rejected"
                 raise HTTPException(status_code=response.status_code, detail=detail)
             response.raise_for_status()
-            return response.json()
+            try:
+                return response.json()
+            except ValueError as exc:
+                # Render can briefly proxy an empty body while a cold service is waking.
+                last_error = exc
+                continue
         except (httpx.HTTPError, ValueError) as exc:
             last_error = exc
-    raise HTTPException(status_code=502, detail=f"Upstream service unavailable: {last_error}")
+    service_name = "explanation" if "explain" in url else "prediction"
+    raise HTTPException(
+        status_code=502,
+        detail=f"The {service_name} service is temporarily unavailable. Please retry in a moment.",
+    )
 
 
 async def _score_rows(rows: list[dict[str, Any]]) -> None:
