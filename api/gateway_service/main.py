@@ -182,7 +182,9 @@ async def customer_explanation(customer_id: str, top_k: int = Query(5, ge=1, le=
 @app.get("/csv-template")
 async def csv_template():
     buffer = io.StringIO()
-    csv.DictWriter(buffer, fieldnames=FEATURE_COLUMNS).writeheader()
+    writer = csv.DictWriter(buffer, fieldnames=FEATURE_COLUMNS)
+    writer.writeheader()
+    writer.writerows(app.state.catalogue.payload(row) for row in app.state.catalogue.rows[:10])
     return Response(buffer.getvalue(), media_type="text/csv", headers={"Content-Disposition": "attachment; filename=retentionpulse-template.csv"})
 
 

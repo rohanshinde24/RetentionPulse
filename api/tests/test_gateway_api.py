@@ -18,7 +18,9 @@ def test_gateway_catalogue_and_upload_contract(monkeypatch):
         assert len(customers.json()["items"]) == 2
         assert customers.json()["items"][0]["risk_category"] == "High"
         assert client.get("/customers/7590-VHVEG/explain").json()["top_features"][0]["name"] == "Contract_Month-to-month"
-        assert "MonthlyCharges" in client.get("/csv-template").text
+        template = client.get("/csv-template").text
+        assert "MonthlyCharges" in template
+        assert len(template.strip().splitlines()) == 11
         header = ",".join(gateway.FEATURE_COLUMNS)
         row = ",".join(str(sample_payload()[column]) for column in gateway.FEATURE_COLUMNS)
         upload = client.post("/predict/upload", content=f"{header}\n{row}\n", headers={"Content-Type": "text/csv"})
