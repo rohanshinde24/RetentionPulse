@@ -9,7 +9,7 @@ export type CustomerData = {
 };
 export type Prediction = { prediction: string; churn_probability: number; threshold: number };
 export type ShapFeature = { name: string; abs_shap: number; shap: number };
-export type Explanation = { top_features: ShapFeature[]; base_value: number; output_value: number; base_probability: number; output_probability: number };
+export type Explanation = { top_features: ShapFeature[]; other_shap: number; base_value: number; output_value: number; base_probability: number; output_probability: number };
 export type CustomerExplanation = Explanation & { customer: CustomerDetail };
 export type CustomerSummary = { customer_id: string; gender: string; tenure: number; contract: string; internet_service: string; monthly_charges: number; churn_probability: number | null; prediction: string | null; risk_category: "Low" | "Medium" | "High" | null };
 export type CustomerDetail = CustomerSummary & { attributes: CustomerData };

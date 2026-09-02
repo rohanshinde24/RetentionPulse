@@ -11,8 +11,24 @@
 .waterfall-connector i { position: relative; display: block; height: 1px; background: #9fada1; }
 .waterfall-connector i::after { position: absolute; top: -3px; right: 0; width: 7px; height: 7px; border-top: 1px solid #9fada1; border-right: 1px solid #9fada1; content: ""; transform: rotate(45deg); }
 .waterfall-note { margin: 0 0 4px; color: #87948c; font-size: 10px; line-height: 1.45; }
+.waterfall-chart { margin: 12px 0 8px; padding: 11px 0; border-top: 1px solid #e1e7df; border-bottom: 1px solid #e1e7df; }
+.waterfall-chart-head, .waterfall-row { display: grid; grid-template-columns: minmax(90px, .85fr) minmax(100px, 1.45fr) 42px; gap: 9px; align-items: center; }
+.waterfall-chart-head { padding-bottom: 7px; color: #87948c; font-size: 8px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; }
+.waterfall-chart-head span:nth-child(2) { text-align: center; }
+.waterfall-chart-head span:last-child { text-align: right; }
+.waterfall-row { min-height: 25px; }
+.waterfall-row b { overflow: hidden; color: #52645a; font-size: 10px; text-overflow: ellipsis; white-space: nowrap; }
+.waterfall-row > span { color: #78857d; text-align: right; font: 9px 'DM Mono'; }
+.waterfall-track { position: relative; height: 14px; border-bottom: 1px solid #e2e8e0; }
+.waterfall-bar { position: absolute; top: 3px; height: 8px; border-radius: 1px; }
+.waterfall-marker { position: absolute; top: 1px; width: 2px; height: 12px; background: #254b3d; transform: translateX(-1px); }
+.waterfall-marker::before { position: absolute; top: -2px; left: -2px; width: 6px; height: 6px; border-radius: 50%; background: inherit; content: ""; }
+.waterfall-marker.low { background: #3f7c56; }
+.waterfall-marker.medium { background: #a96f28; }
+.waterfall-marker.high { background: #bb5948; }
+.waterfall-row.baseline b, .waterfall-row.endpoint b { color: #254b3d; font-weight: 700; }
 .prediction-result .shap-waterfall { grid-template-columns: 1fr; gap: 6px; padding: 11px 0; }
 .prediction-result .waterfall-node, .prediction-result .waterfall-node.final { display: flex; align-items: baseline; justify-content: space-between; text-align: left; }
 .prediction-result .waterfall-connector { display: none; }
 .prediction-result .waterfall-node b { margin: 0; font-size: 21px; }
-@media (max-width: 800px) { .shap-waterfall { margin: 2px 0 8px; } }
+@media (max-width: 800px) { .shap-waterfall { margin: 2px 0 8px; } .waterfall-chart-head, .waterfall-row { grid-template-columns: 84px minmax(70px, 1fr) 38px; gap: 6px; } }

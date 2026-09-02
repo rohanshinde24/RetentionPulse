@@ -309,8 +309,10 @@ def explain(data: CustomerData, top_k: int = Query(6, ge=1, le=50)):
     # Tree SHAP values for this classifier are in log-odds space. Returning
     # both scales lets the UI show a faithful additive path and readable risk.
     sigmoid = lambda value: 1 / (1 + np.exp(-value))
+    top_features = pairs[:top_k]
     return {
-        "top_features": pairs[:top_k],
+        "top_features": top_features,
+        "other_shap": float(np.sum(shap_row) - sum(item["shap"] for item in top_features)),
         "base_value": base_value,
         "output_value": output_value,
         "base_probability": float(sigmoid(base_value)),
