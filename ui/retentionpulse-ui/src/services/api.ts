@@ -20,7 +20,7 @@ export class ApiError extends Error { constructor(message: string, public status
 async function request<T>(path: string, init?: RequestInit): Promise<T> { const response = await fetch(`${API_BASE}${path}`, init); const body = await response.json().catch(() => null); if (!response.ok) throw new ApiError(body?.error?.message || body?.detail || "The service could not complete that request.", response.status); return body as T; }
 export const api = {
   health: () => request<{ status: string; customer_count: number }>("/health"), dashboard: () => request<Dashboard>("/dashboard"),
-  customers: (params: URLSearchParams) => request<{ items: CustomerSummary[]; total: number; page: number; page_size: number }>(`/customers?${params}`),
+  customers: (params: URLSearchParams) => request<{ items: CustomerSummary[]; total: number; page: number; page_size: number; scoring_status: "available" | "temporarily_unavailable" }>(`/customers?${params}`),
   customer: (id: string) => request<CustomerDetail>(`/customers/${id}`), explanation: (id: string) => request<CustomerExplanation>(`/customers/${id}/explain`),
   predict: (data: CustomerData) => request<Prediction>("/predict", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(data) }),
   explain: (data: CustomerData) => request<Explanation>("/explain?top_k=5", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(data) }),
