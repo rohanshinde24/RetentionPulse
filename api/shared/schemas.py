@@ -38,7 +38,7 @@
 #     explanation: dict
 from enum import Enum
 from typing import List
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, ConfigDict, Field
 
 
 # --- Enums for categorical features ---
@@ -82,8 +82,8 @@ class CustomerData(BaseModel):
     MonthlyCharges: float
     TotalCharges: float
 
-    class Config:
-        json_schema_extra = {
+    model_config = ConfigDict(
+        json_schema_extra={
             "example": {
                 "gender": "Male",
                 "SeniorCitizen": 0,
@@ -106,6 +106,7 @@ class CustomerData(BaseModel):
                 "TotalCharges": 1400.0,
             }
         }
+    )
 
 
 # --- Response Schemas ---
@@ -116,14 +117,20 @@ class PredictionResponse(BaseModel):
 
 
 class BatchRequest(BaseModel):
-    records: List[CustomerData]
+    records: List[CustomerData] = Field(min_length=1, max_length=100)
 
 
 class BatchPredictionResponse(BaseModel):
     results: List[PredictionResponse]
 
 
+class ShapFeature(BaseModel):
+    name: str
+    abs_shap: float
+    shap: float
+
+
 class ExplanationResponse(BaseModel):
-    explanation: dict
+    top_features: List[ShapFeature]
 # class ExplanationResponse(BaseModel):
 #     explanation: dict  # or refine into List[dict]

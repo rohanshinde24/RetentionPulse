@@ -1,9 +1,13 @@
-import joblib
+"""Shared model loading configuration."""
 import os
+from pathlib import Path
 
-MODEL_PATH = os.path.join(os.path.dirname(__file__), "..", "models", "model.pkl")
-DECISION_THRESHOLD = 0.5
+import joblib
+
+DEFAULT_MODEL_PATH = Path(__file__).resolve().parents[1] / "models" / "model.pkl"
+DECISION_THRESHOLD = float(os.getenv("DECISION_THRESHOLD", "0.5"))
+
 
 def load_model():
-    model_pipeline = joblib.load(MODEL_PATH)
-    return model_pipeline, DECISION_THRESHOLD, MODEL_PATH
+    model_path = Path(os.getenv("MODEL_PATH", str(DEFAULT_MODEL_PATH)))
+    return joblib.load(model_path), DECISION_THRESHOLD, str(model_path)

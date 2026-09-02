@@ -1,35 +1,14 @@
-import pytest
 from fastapi.testclient import TestClient
-from main_explain import app   # explanation service
+from explain_service.main import app
+from tests.conftest import sample_payload
 
 client = TestClient(app)
 
-def sample_payload():
-    return {
-        "gender": "Male",
-        "SeniorCitizen": 0,
-        "Partner": "Yes",
-        "Dependents": "No",
-        "tenure": 24,
-        "PhoneService": "Yes",
-        "MultipleLines": "No",
-        "InternetService": "DSL",
-        "OnlineSecurity": "Yes",
-        "OnlineBackup": "Yes",
-        "DeviceProtection": "No",
-        "TechSupport": "Yes",
-        "StreamingTV": "No",
-        "StreamingMovies": "No",
-        "Contract": "One year",
-        "PaperlessBilling": "Yes",
-        "PaymentMethod": "Mailed check",
-        "MonthlyCharges": 59.9,
-        "TotalCharges": 1400.0,
-    }
 
-def test_explain_smoke():
-    r = client.post("/explain?top_k=5", json=sample_payload())
-    assert r.status_code == 200
-    body = r.json()
-    # The endpoint may return an error if model not loaded — both are acceptable
-    assert ("top_features" in body and isinstance(body["top_features"], list)) or ("error" in body)
+def test_explain_returns_ordered_feature_contract():
+    response = client.post("/explain?top_k=5", json=sample_payload())
+    assert response.status_code == 200
+    features = response.json()["top_features"]
+    assert len(features) == 5
+    assert all({"name", "abs_shap", "shap"} <= feature.keys() for feature in features)
+    assert features == sorted(features, key=lambda feature: feature["abs_shap"], reverse=True)

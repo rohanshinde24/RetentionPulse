@@ -1,4 +1,3 @@
-import Gauge from "./Gauge";
 import CircularGauge from "./CircularGauge";
 import PredictionBadge from "./PredictionBadge";
 import ShapBars from "./ShapBars";

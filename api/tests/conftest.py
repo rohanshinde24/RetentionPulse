@@ -1,0 +1,2 @@
+def sample_payload():
+    return {"gender": "Male", "SeniorCitizen": 0, "Partner": "Yes", "Dependents": "No", "tenure": 24, "PhoneService": "Yes", "MultipleLines": "No", "InternetService": "DSL", "OnlineSecurity": "Yes", "OnlineBackup": "Yes", "DeviceProtection": "No", "TechSupport": "Yes", "StreamingTV": "No", "StreamingMovies": "No", "Contract": "One year", "PaperlessBilling": "Yes", "PaymentMethod": "Mailed check", "MonthlyCharges": 59.9, "TotalCharges": 1400.0}

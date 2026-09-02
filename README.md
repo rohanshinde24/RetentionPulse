@@ -219,13 +219,57 @@ All calls should go through the **gateway** in dev/prod:
 
 ## ✅ Testing
 
-Backend tests (smoke tests live under `api/tests`):
+Backend unit and contract tests live under `api/tests`:
 
 ```bash
 cd RetentionPulse
 source venv/bin/activate
 cd api
 pytest -q
+```
+
+Frontend linting and production build:
+
+```bash
+cd ui/retentionpulse-ui
+npm ci
+npm run lint
+npm run build
+```
+
+---
+
+## Product Workflows
+
+The UI has three connected workflows:
+
+- **Portfolio dashboard**: live customer metrics, searchable customer IDs, and contract/internet-service filters. The gateway scores visible records in bounded batches and caches those results for the process lifetime.
+- **Customer profile**: one customer's probability, risk category, relevant account context, and the strongest SHAP contributors. Positive SHAP values are labelled as factors that raise churn risk; negative values reduce it.
+- **Prediction lab**: an individual scenario form plus a CSV workflow. CSV uploads support up to 1,000 rows, process valid records in batches of 100, keep valid rows when other rows fail validation, and provide a downloadable result CSV.
+
+### Public Gateway API
+
+| Endpoint | Purpose |
+| --- | --- |
+| `GET /health` | Gateway status, service configuration, and catalogue count |
+| `GET /dashboard` | Portfolio metrics and scoring coverage |
+| `GET /customers` | Paginated customer table with search and filters |
+| `GET /customers/{id}` | Customer profile and prediction |
+| `GET /customers/{id}/explain` | Customer profile and top SHAP factors |
+| `POST /predict` | Score one customer |
+| `POST /predict/batch` | Score up to 100 JSON records |
+| `POST /predict/upload` | Score raw CSV content, up to 1,000 rows |
+| `GET /csv-template` | Download the required upload headers |
+
+All gateway failures use a predictable error envelope:
+
+```json
+{
+  "error": {
+    "code": "REQUEST_ERROR",
+    "message": "CSV is missing required columns: MonthlyCharges"
+  }
+}
 ```
 
 ---
@@ -254,6 +298,7 @@ Create **three Web Services** for the backend (all pointing to the same repo, ro
 
   - `PREDICT_URL=https://<your-prediction-service>.onrender.com`
   - `EXPLAIN_URL=https://<your-explain-service>.onrender.com`
+  - `CUSTOMER_DATA_PATH` is optional; by default the gateway reads the committed telecom dataset.
 
 4. **Frontend (Static Site)**
 
@@ -265,6 +310,8 @@ Create **three Web Services** for the backend (all pointing to the same repo, ro
   - `VITE_API_BASE=https://<your-gateway-service>.onrender.com`
 
 > **CORS:** Add your frontend URL to the gateway CORS `allow_origins` list.
+
+Current public UI: [retentionpulse-1.onrender.com](https://retentionpulse-1.onrender.com). The deployed UI should use `https://retentionpulse-gateway.onrender.com` for `VITE_API_BASE`.
 
 ---
 

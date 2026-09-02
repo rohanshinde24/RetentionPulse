@@ -250,7 +250,7 @@ def explain(data: CustomerData, top_k: int = Query(6, ge=1, le=50)):
     """
     # 1) Build a DataFrame with EXACT training column names & types
     #    _normalize_df should map your snake_case payload to the training schema
-    X_raw = _normalize_df(pd.DataFrame([data.dict()]))
+    X_raw = _normalize_df(pd.DataFrame([data.model_dump()]))
 
     # 2) Transform with the fitted preprocessor (OHE + scaling)
     X_t = preprocessor.transform(X_raw)

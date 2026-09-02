@@ -25,14 +25,14 @@ def health():
 
 @app.post("/predict", response_model=PredictionResponse)
 def predict_churn(data: CustomerData):
-    df = _normalize_df(pd.DataFrame([data.dict()]))
+    df = _normalize_df(pd.DataFrame([data.model_dump()]))
     prob = float(model_pipeline.predict_proba(df)[0][1])
     label = "Churn" if prob >= DECISION_THRESHOLD else "No Churn"
     return PredictionResponse(prediction=label, churn_probability=prob, threshold=DECISION_THRESHOLD)
 
 @app.post("/predict/batch", response_model=BatchPredictionResponse)
 def predict_batch(payload: BatchRequest):
-    df = _normalize_df(pd.DataFrame([r.dict() for r in payload.records]))
+    df = _normalize_df(pd.DataFrame([r.model_dump() for r in payload.records]))
     probs = model_pipeline.predict_proba(df)[:, 1]
     results = []
     for p in probs:

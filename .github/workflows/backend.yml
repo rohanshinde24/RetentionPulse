@@ -50,13 +50,11 @@ jobs:
       - name: Install deps
         run: pip install -r requirements.txt
 
-      - name: Smoke tests (fastapi clients)
+      - name: Unit and contract tests
         env:
           PYTHONPATH: ${{ github.workspace }}/api
           MODEL_PATH: ${{ env.MODEL_PATH }}
-        run: |
-          # If you have tests, they'll run; if not, this won't fail the build.
-          pytest -q || echo "No tests or tests failed; continuing for now."
+        run: pytest -q
 
   docker:
     name: Build (and optionally push) images

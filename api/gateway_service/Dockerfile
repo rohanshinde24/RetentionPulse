@@ -11,6 +11,7 @@ COPY api/requirements.txt api/requirements.txt
 RUN pip install --no-cache-dir -r api/requirements.txt
 
 COPY api /app/api
+COPY data /app/data
 
 ENV PYTHONPATH=/app/api
 
