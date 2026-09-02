@@ -132,5 +132,9 @@ class ShapFeature(BaseModel):
 
 class ExplanationResponse(BaseModel):
     top_features: List[ShapFeature]
+    base_value: float
+    output_value: float
+    base_probability: float
+    output_probability: float
 # class ExplanationResponse(BaseModel):
 #     explanation: dict  # or refine into List[dict]

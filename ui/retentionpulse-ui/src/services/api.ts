@@ -9,6 +9,8 @@ export type CustomerData = {
 };
 export type Prediction = { prediction: string; churn_probability: number; threshold: number };
 export type ShapFeature = { name: string; abs_shap: number; shap: number };
+export type Explanation = { top_features: ShapFeature[]; base_value: number; output_value: number; base_probability: number; output_probability: number };
+export type CustomerExplanation = Explanation & { customer: CustomerDetail };
 export type CustomerSummary = { customer_id: string; gender: string; tenure: number; contract: string; internet_service: string; monthly_charges: number; churn_probability: number | null; prediction: string | null; risk_category: "Low" | "Medium" | "High" | null };
 export type CustomerDetail = CustomerSummary & { attributes: CustomerData };
 export type Dashboard = { total_customers: number; observed_churn_rate: number; scored_customers: number; average_risk: number | null; high_risk_customers: number };
@@ -19,8 +21,8 @@ async function request<T>(path: string, init?: RequestInit): Promise<T> { const 
 export const api = {
   health: () => request<{ status: string; customer_count: number }>("/health"), dashboard: () => request<Dashboard>("/dashboard"),
   customers: (params: URLSearchParams) => request<{ items: CustomerSummary[]; total: number; page: number; page_size: number }>(`/customers?${params}`),
-  customer: (id: string) => request<CustomerDetail>(`/customers/${id}`), explanation: (id: string) => request<{ customer: CustomerDetail; top_features: ShapFeature[] }>(`/customers/${id}/explain`),
+  customer: (id: string) => request<CustomerDetail>(`/customers/${id}`), explanation: (id: string) => request<CustomerExplanation>(`/customers/${id}/explain`),
   predict: (data: CustomerData) => request<Prediction>("/predict", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(data) }),
-  explain: (data: CustomerData) => request<{ top_features: ShapFeature[] }>("/explain?top_k=5", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(data) }),
+  explain: (data: CustomerData) => request<Explanation>("/explain?top_k=5", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(data) }),
   upload: (csv: string) => request<UploadResult>("/predict/upload", { method: "POST", headers: { "Content-Type": "text/csv" }, body: csv }), templateUrl: `${API_BASE}/csv-template`,
 };

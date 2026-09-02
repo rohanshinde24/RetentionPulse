@@ -299,4 +299,20 @@ def explain(data: CustomerData, top_k: int = Query(6, ge=1, le=50)):
 
     # 6) Sort by absolute contribution and return top-k
     pairs.sort(key=lambda x: x["abs_shap"], reverse=True)
-    return {"top_features": pairs[:top_k]}
+    base_values = np.asarray(sv.base_values)
+    if base_values.ndim == 2 and base_values.shape[-1] > 1:
+        base_value = float(base_values[0, 1])
+    else:
+        base_value = float(base_values.reshape(-1)[0])
+    output_value = base_value + float(np.sum(shap_row))
+
+    # Tree SHAP values for this classifier are in log-odds space. Returning
+    # both scales lets the UI show a faithful additive path and readable risk.
+    sigmoid = lambda value: 1 / (1 + np.exp(-value))
+    return {
+        "top_features": pairs[:top_k],
+        "base_value": base_value,
+        "output_value": output_value,
+        "base_probability": float(sigmoid(base_value)),
+        "output_probability": float(sigmoid(output_value)),
+    }

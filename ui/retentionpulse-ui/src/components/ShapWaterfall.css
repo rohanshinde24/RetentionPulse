@@ -1,0 +1,16 @@
+.shap-waterfall { display: grid; grid-template-columns: auto minmax(100px, 1fr) auto; gap: 12px; align-items: center; margin: 2px 0 8px; padding: 13px 0; border-top: 1px solid #e1e7df; border-bottom: 1px solid #e1e7df; }
+.waterfall-node { min-width: 68px; color: #52645a; }
+.waterfall-node small, .waterfall-connector span { display: block; color: #87948c; font-size: 9px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; }
+.waterfall-node b { display: block; margin-top: 3px; color: #254b3d; font: 600 24px 'Newsreader'; }
+.waterfall-node.final { text-align: right; }
+.waterfall-node.final b { color: #bb5948; }
+.waterfall-connector { display: grid; gap: 6px; min-width: 0; }
+.waterfall-connector span { text-align: center; font-size: 8px; }
+.waterfall-connector i { position: relative; display: block; height: 1px; background: #9fada1; }
+.waterfall-connector i::after { position: absolute; top: -3px; right: 0; width: 7px; height: 7px; border-top: 1px solid #9fada1; border-right: 1px solid #9fada1; content: ""; transform: rotate(45deg); }
+.waterfall-note { margin: 0 0 4px; color: #87948c; font-size: 10px; line-height: 1.45; }
+.prediction-result .shap-waterfall { grid-template-columns: 1fr; gap: 6px; padding: 11px 0; }
+.prediction-result .waterfall-node, .prediction-result .waterfall-node.final { display: flex; align-items: baseline; justify-content: space-between; text-align: left; }
+.prediction-result .waterfall-connector { display: none; }
+.prediction-result .waterfall-node b { margin: 0; font-size: 21px; }
+@media (max-width: 800px) { .shap-waterfall { margin: 2px 0 8px; } }
