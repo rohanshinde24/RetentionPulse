@@ -174,20 +174,15 @@ async def customers(search: str | None = None, contract: str | None = None, inte
     catalogue: CustomerCatalogue = app.state.catalogue
     matches = catalogue.search(search, contract, internet_service)
     records = matches[(page - 1) * page_size:page * page_size]
-    scoring_status = "available"
-    try:
-        await _score_rows(records)
-    except HTTPException as exc:
-        if exc.status_code != 429:
-            raise
-        # A rate-limited model service must not make the public catalogue unusable.
-        scoring_status = "temporarily_unavailable"
-    return {"items": [catalogue.public_row(row) for row in records], "total": len(matches), "page": page, "page_size": page_size, "scoring_status": scoring_status}
+    return {"items": [catalogue.public_row(row) for row in records], "total": len(matches), "page": page, "page_size": page_size, "scoring_status": "on_demand"}
 
 
 @app.get("/customers/{customer_id}")
 async def customer_detail(customer_id: str):
-    return await _customer_with_score(app.state.catalogue.find(customer_id))
+    row = app.state.catalogue.find(customer_id)
+    customer = app.state.catalogue.public_row(row)
+    customer["attributes"] = app.state.catalogue.payload(row)
+    return customer
 
 
 @app.get("/customers/{customer_id}/explain")

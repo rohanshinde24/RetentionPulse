@@ -17,7 +17,7 @@ def test_gateway_catalogue_and_upload_contract(monkeypatch):
         assert client.get("/health").json()["customer_count"] == 7043
         customers = client.get("/customers?page_size=2")
         assert len(customers.json()["items"]) == 2
-        assert customers.json()["items"][0]["risk_category"] == "High"
+        assert customers.json()["items"][0]["risk_category"] is None
         assert client.get("/customers/7590-VHVEG/explain").json()["top_features"][0]["name"] == "Contract_Month-to-month"
         template = client.get("/csv-template").text
         assert "MonthlyCharges" in template
@@ -29,22 +29,22 @@ def test_gateway_catalogue_and_upload_contract(monkeypatch):
         assert upload.json()["successful_rows"] == 1
 
 
+def test_gateway_browses_catalogue_without_live_prediction(monkeypatch):
+    async def unexpected_prediction(*_args, **_kwargs):
+        raise AssertionError("Portfolio browsing must not call a model service")
+
+    monkeypatch.setattr(gateway, "_request_json", unexpected_prediction)
+    with TestClient(gateway.app) as client:
+        response = client.get("/customers?page_size=2")
+
+    assert response.status_code == 200
+    assert response.json()["items"][0]["churn_probability"] is None
+    assert response.json()["scoring_status"] == "on_demand"
+
+
 def test_gateway_rejects_csv_without_required_columns(monkeypatch):
     monkeypatch.setattr(gateway, "_request_json", fake_request)
     with TestClient(gateway.app) as client:
         response = client.post("/predict/upload", content="tenure\n12\n", headers={"Content-Type": "text/csv"})
     assert response.status_code == 422
     assert response.json()["error"]["code"] == "REQUEST_ERROR"
-
-
-def test_gateway_keeps_catalogue_available_when_model_is_rate_limited(monkeypatch):
-    async def rate_limited_request(_: str, __: str, payload=None):
-        raise HTTPException(status_code=429, detail="Too Many Requests")
-
-    monkeypatch.setattr(gateway, "_request_json", rate_limited_request)
-    with TestClient(gateway.app) as client:
-        response = client.get("/customers?page_size=2")
-
-    assert response.status_code == 200
-    assert len(response.json()["items"]) == 2
-    assert response.json()["scoring_status"] == "temporarily_unavailable"
